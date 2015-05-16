@@ -24,6 +24,7 @@ public class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     /// completion call back
     var completedCallBack: ((stringValue: String) -> ())?
     
+    ///QRCode init func
     public init(autoRemoveSubLayers: Bool = false, lineWidth: CGFloat = 4, strokeColor: UIColor = UIColor.greenColor(), maxDetectedCount: Int = 20) {
         
         self.lineWidth = lineWidth
