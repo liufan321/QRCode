@@ -15,16 +15,24 @@ class ViewController: UIViewController {
     let scanner = QRCode(autoRemoveSubLayers: false)
     @IBOutlet weak var iconView: UIImageView!
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        scanner.prepareScan(view) { (stringValue) -> () in
+            println(stringValue)
+        }
+        // test scan frame
+        scanner.scanFrame = view.bounds
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        scanner.scanCode(view) { (stringValue) in
-            println(stringValue)
-        }
+        scanner.startScan()
     }
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        iconView.image = scanner.generateImage("我就是刀哥", avatarImage: UIImage(named: "avatar"), avatarScale: 0.3)
+        self.iconView.image = QRCode.generateImage("我就是刀哥", avatarImage: UIImage(named: "avatar"), avatarScale: 0.3)
     }
 }
 
