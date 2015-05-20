@@ -27,7 +27,7 @@ public class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     public var scanFrame: CGRect = CGRectZero
     
     ///  init function
-    ///
+    ///  
     ///  :param: autoRemoveSubLayers remove sub layers auto after detected code image, defalt is false
     ///  :param: lineWidth           line width, default is 4
     ///  :param: strokeColor         stroke color, default is Green
