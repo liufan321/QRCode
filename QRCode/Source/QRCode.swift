@@ -26,7 +26,7 @@ public class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     /// the scan rect, default is the bounds of the scan view, can modify it if need
     public var scanFrame: CGRect = CGRectZero
     
-    ///  init function
+    ///  init functiondd
     ///
     ///  :param: autoRemoveSubLayers remove sub layers auto after detected code image, defalt is false
     ///  :param: lineWidth           line width, default is 4
