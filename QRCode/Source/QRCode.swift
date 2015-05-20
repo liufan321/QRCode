@@ -26,13 +26,9 @@ public class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     /// the scan rect, default is the bounds of the scan view, can modify it if need
     public var scanFrame: CGRect = CGRectZero
     
-    ///  init function
-    ///
-    ///  :param: autoRemoveSubLayers remove sub layers auto after detected code image, defalt is false
-    ///  :param: lineWidth           line width, default is 4
-    ///  :param: strokeColor         stroke color, default is Green
-    ///  :param: maxDetectedCount    max detecte count, default is 20
-    ///
+
+    
+    ///  :dfasdfsdf
     ///  :returns: the scanner object
     public init(autoRemoveSubLayers: Bool = false, lineWidth: CGFloat = 4, strokeColor: UIColor = UIColor.greenColor(), maxDetectedCount: Int = 20) {
         
