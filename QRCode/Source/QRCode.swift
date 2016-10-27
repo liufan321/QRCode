@@ -10,6 +10,14 @@ import UIKit
 import AVFoundation
 
 open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
+	
+	/// the type of code to generate; the raw value is the name of the filter to use with CoreImage
+	public enum CodeType: String {
+		// 2D QR code
+		case qr = "CIQRCodeGenerator"
+		// 1D bar code
+		case bar = "CICode128BarcodeGenerator"
+	}
     
     /// corner line width
     var lineWidth: CGFloat
@@ -71,7 +79,7 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     ///
     ///  - returns: the generated image
     class open func generateImage(_ stringValue: String, avatarImage: UIImage?, avatarScale: CGFloat = 0.25) -> UIImage? {
-        return generateImage(stringValue, avatarImage: avatarImage, avatarScale: avatarScale, color: CIColor(color: UIColor.black), backColor: CIColor(color: UIColor.white))
+		return generateImage(stringValue, avatarImage: avatarImage, avatarScale: avatarScale, color: CIColor(color: UIColor.black), backColor: CIColor(color: UIColor.white))
     }
     
     ///  Generate Qrcode Image
@@ -79,29 +87,46 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     ///  - parameter stringValue: string value to encoe
     ///  - parameter avatarImage: avatar image will display in the center of qrcode image
     ///  - parameter avatarScale: the scale for avatar image, default is 0.25
-    ///  - parameter color:       the CI color for forenground, default is black
-    ///  - parameter backColor:   th CI color for background, default is white
+    ///  - parameter color:       the CI color for foreground, default is black
+	///  - parameter backColor:   the CI color for background, default is white
+	///  - parameter codeType:    the type of code, as seen in CodeType (qr, bar)
+	///  - parameter width:		  desired width of the output image; if not specified, the size is the filter's default
+	///  - parameter height:	  desired height of the output image; if not specified, the size is the filter's default; if only width or height is specified, the transform will be applied keeping the aspect ratio
     ///
     ///  - returns: the generated image
-    class open func generateImage(_ stringValue: String, avatarImage: UIImage?, avatarScale: CGFloat = 0.25, color: CIColor, backColor: CIColor) -> UIImage? {
+	class open func generateImage(_ stringValue: String, avatarImage: UIImage?, avatarScale: CGFloat = 0.25, color: CIColor, backColor: CIColor, codeType: CodeType = .bar, width: CGFloat? = nil, height: CGFloat? = nil) -> UIImage? {
         
         // generate qrcode image
-        let qrFilter = CIFilter(name: "CIQRCodeGenerator")!
-        qrFilter.setDefaults()
-        qrFilter.setValue(stringValue.data(using: String.Encoding.utf8, allowLossyConversion: false), forKey: "inputMessage")
+		let codeFilter = CIFilter(name: codeType.rawValue)!
+        codeFilter.setDefaults()
+        codeFilter.setValue(stringValue.data(using: String.Encoding.utf8, allowLossyConversion: false), forKey: "inputMessage")
         
-        let ciImage = qrFilter.outputImage
-        
-        // scale qrcode image
+        let ciImage = codeFilter.outputImage
+		
         let colorFilter = CIFilter(name: "CIFalseColor")!
         colorFilter.setDefaults()
-        colorFilter.setValue(ciImage, forKey: "inputImage")
+        colorFilter.setValue(ciImage, forKey: kCIInputImageKey)
         colorFilter.setValue(color, forKey: "inputColor0")
         colorFilter.setValue(backColor, forKey: "inputColor1")
-        
-        let transform = CGAffineTransform(scaleX: 10, y: 10)
-        let transformedImage = qrFilter.outputImage!.applying(transform)
-        
+		
+		// scale qrcode image?
+		var transformedImage = colorFilter.outputImage!
+		var scaleX: CGFloat?
+		var scaleY: CGFloat?
+		if let desiredWidth = width {
+			let originalWidth = transformedImage.extent.width
+			scaleX = desiredWidth / originalWidth
+		}
+		if let desiredHeight = height {
+			let originalHeight = transformedImage.extent.height
+			scaleY = desiredHeight / originalHeight
+		}
+		// if one is nil, it takes the other's value
+		if let finalScaleX = scaleX ?? scaleY, let finalScaleY = scaleY ?? scaleX {
+			let transform = CGAffineTransform(scaleX: finalScaleX, y: finalScaleY)
+			transformedImage = transformedImage.applying(transform)
+		}
+		
         let image = UIImage(ciImage: transformedImage)
         
         if avatarImage != nil {
