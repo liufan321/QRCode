@@ -46,8 +46,12 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     ///  - parameter maxDetectedCount:    max detecte count, default is 20
     ///
     ///  - returns: the scanner object
-    public init(autoRemoveSubLayers: Bool, lineWidth: CGFloat = 4, strokeColor: UIColor = UIColor.green, maxDetectedCount: Int = 20) {
-        
+    public init?(autoRemoveSubLayers: Bool, lineWidth: CGFloat = 4, strokeColor: UIColor = UIColor.green, maxDetectedCount: Int = 20) {
+
+        if AVCaptureDevice.devices().count == 0 {
+            return nil
+        }
+
         self.lineWidth = lineWidth
         self.strokeColor = strokeColor
         self.maxDetectedCount = maxDetectedCount
