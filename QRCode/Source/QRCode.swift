@@ -191,6 +191,7 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         
         session.addInput(videoInput)
         session.addOutput(dataOutput)
+        session.sessionPreset = AVCaptureSessionPresetPhoto
         
         dataOutput.metadataObjectTypes = dataOutput.availableMetadataObjectTypes;
         dataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
