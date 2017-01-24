@@ -21,17 +21,25 @@
     [super viewDidLoad];
     
     // alloc and prepare for scan
+    NSError *error;
     self.scanner = [[QRCode alloc] init];
-    [self.scanner prepareScan:self.view completion:^(NSString * __nonnull stringValue) {
+    [self.scanner prepareScan:self.view error:&error completion:^(NSString * _Nonnull stringValue) {
         NSLog(@"%@", stringValue);
     }];
+    if (error) {
+        NSLog(@"Error during preparing scan");
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
     // start scan
-    [self.scanner startScan];
+    NSError *error;
+    [self.scanner startScanAndReturnError:&error];
+    if (error) {
+        NSLog(@"Error during starting scan");
+    }
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {

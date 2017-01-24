@@ -19,8 +19,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-		scanner.prepareScan(view) { (stringValue) -> () in
-            print(stringValue)
+        do{
+            try scanner.prepareScan(view) { (stringValue) -> () in
+                print(stringValue)
+            }
+        }catch(_){
+            print("Error during preparing scan")
         }
         // test scan frame
         scanner.scanFrame = view.bounds
@@ -29,7 +33,11 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        scanner.startScan()
+        do{
+            try scanner.startScan()
+        }catch(_){
+            print("Error during starting scan")
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
