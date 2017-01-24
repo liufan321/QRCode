@@ -9,7 +9,17 @@
 import UIKit
 import AVFoundation
 
+
 open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
+    
+    @objc public enum Error : Int, Swift.Error{
+        public typealias RawValue = Int
+
+        case sessionAlreadyRunning
+        case sessionAlreadyStopped
+        case cannotOpenCamera
+        case cannotSaveData
+    }
     
     /// corner line width
     var lineWidth: CGFloat
@@ -135,33 +145,31 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     ///
     ///  - parameter view:       the scan view, the preview layer and the drawing layer will be insert into this view
     ///  - parameter completion: the completion call back
-    open func prepareScan(_ view: UIView, completion:@escaping (_ stringValue: String)->()) {
+    open func prepareScan(_ view: UIView, completion:@escaping (_ stringValue: String)->()) throws {
         
         scanFrame = view.bounds
         
         completedCallBack = completion
         currentDetectedCount = 0
         
-        setupSession()
+        try setupSession()
         setupLayers(view)
     }
     
     /// start scan
-    open func startScan() {
+    open func startScan() throws {
         if session.isRunning {
             print("the  capture session is running")
-            
-            return
+            throw QRCode.Error.sessionAlreadyRunning
         }
         session.startRunning()
     }
     
     /// stop scan
-    open func stopScan() {
+    open func stopScan() throws {
         if !session.isRunning {
             print("the capture session is not running")
-            
-            return
+            throw QRCode.Error.sessionAlreadyStopped
         }
         session.stopRunning()
     }
@@ -173,20 +181,20 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         view.layer.insertSublayer(previewLayer, at: 0)
     }
     
-    func setupSession() {
+    func setupSession() throws{
         if session.isRunning {
             print("the capture session is running")
-            return
+            throw QRCode.Error.sessionAlreadyRunning
         }
         
         if !session.canAddInput(videoInput) {
             print("can not add input device")
-            return
+            throw QRCode.Error.cannotOpenCamera
         }
         
         if !session.canAddOutput(dataOutput) {
             print("can not add output device")
-            return
+            throw QRCode.Error.cannotSaveData
         }
         
         session.addInput(videoInput)
