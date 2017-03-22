@@ -102,8 +102,11 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         let transform = CGAffineTransform(scaleX: 10, y: 10)
         let transformedImage = qrFilter.outputImage!.applying(transform)
         
-        let image = UIImage(ciImage: transformedImage)
+        let context = CIContext(options: nil)
+        let cgimage = context.createCGImage(transformedImage, from: transformedImage.extent)
         
+        let image = UIImage(cgImage: cgimage!)
+       
         if avatarImage != nil {
             return insertAvatarImage(image, avatarImage: avatarImage!, scale: avatarScale)
         }
