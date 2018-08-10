@@ -255,21 +255,21 @@ open class QRCode: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         shapeLayer.lineWidth = lineWidth
         shapeLayer.strokeColor = strokeColor.cgColor
         shapeLayer.fillColor = UIColor.clear.cgColor
-        shapeLayer.path = createPath(codeObject.corners as NSArray).cgPath
+        shapeLayer.path = createPath(codeObject.corners).cgPath
         
         drawLayer.addSublayer(shapeLayer)
     }
     
-    func createPath(_ points: NSArray) -> UIBezierPath {
+    func createPath(_ points: [CGPoint]) -> UIBezierPath {
         let path = UIBezierPath()
 
-        var point = CGPoint(dictionaryRepresentation: points[0] as! CFDictionary)
-        path.move(to: point!)
+        var point = points[0]
+        path.move(to: point)
         
         var index = 1
         while index < points.count {
-            point = CGPoint(dictionaryRepresentation: points[index] as! CFDictionary)
-            path.addLine(to: point!)
+            point = points[index]
+            path.addLine(to: point)
             
             index = index + 1
         }
